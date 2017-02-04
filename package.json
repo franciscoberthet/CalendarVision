@@ -6,8 +6,10 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@google-cloud/language": "^0.8.0",
     "@google-cloud/vision": "^0.8.0",
     "body-parser": "~1.16.0",
+    "chrono-node": "^1.2.5",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.0",
     "ejs": "~2.5.5",

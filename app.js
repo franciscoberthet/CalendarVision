@@ -7,8 +7,14 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var upload = multer({dest: 'uploads/'});
 var fs = require('fs');
+var chrono = require('chrono-node');
 
 var vision = require('@google-cloud/vision')({
+  projectId: 'daring-keep-139023',
+  keyFilename: 'My Project-e9080f515280.json'
+});
+
+var language = require('@google-cloud/language')({
   projectId: 'daring-keep-139023',
   keyFilename: 'My Project-e9080f515280.json'
 });
@@ -25,12 +31,82 @@ app.post('/upload', upload.single('image'), function(req, res, next){
 		if(err){
 			res.send(err);
 		} else {
-			res.send(JSON.stringify(text));
+			var concatted = concatSpace(text);
+			
+			language.detectEntities(concatted, function(err, entities, apiResponse){
+				if(err){
+					res.send(err);
+				} else {
+					var title = "",
+						location = "";
+						
+					if(entities.events){
+						title = entities.events[0];
+					}else if (entities.other){
+						title = entities.other[0];
+					}
+					
+					if(entities.places){
+						location = entities.places[0];
+					}else if (entities.organizations){
+						location = entities.organizations[0];
+					}
+					
+					var returnobj = {
+						date: chrono.parseDate(concatSpace(text)),
+						location: location,
+						title: title,
+						entities: entities
+					}
+					res.send(returnobj);
+				}
+			})
 		}
 	})
 });
 
+var concatSpace = function(strings){
+	var new_string = strings[1];
+	for(i=2; i<strings.length; i++){
+		new_string = new_string + " " + strings[i];
+	}
+	return new_string;
+}
 
+// Compute the edit distance between the two given strings
+function getEditDistance(a, b) {
+  if (a.length === 0) return b.length; 
+  if (b.length === 0) return a.length; 
+
+  var matrix = [];
+
+  // increment along the first column of each row
+  var i;
+  for (i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+
+  // increment each column in the first row
+  var j;
+  for (j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+
+  // Fill in the rest of the matrix
+  for (i = 1; i <= b.length; i++) {
+    for (j = 1; j <= a.length; j++) {
+      if (b.charAt(i-1) == a.charAt(j-1)) {
+        matrix[i][j] = matrix[i-1][j-1];
+      } else {
+        matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, // substitution
+                                Math.min(matrix[i][j-1] + 1, // insertion
+                                         matrix[i-1][j] + 1)); // deletion
+      }
+    }
+  }
+
+  return matrix[b.length][a.length];
+};
 
 
 
