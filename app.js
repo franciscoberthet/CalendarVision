@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var upload = multer({dest: 'uploads/'});
+var fs = require('fs');
 
 var vision = require('@google-cloud/vision')({
   projectId: 'daring-keep-139023',
@@ -20,6 +21,7 @@ app.set('view engine', 'ejs');
 
 app.post('/upload', upload.single('image'), function(req, res, next){
 	vision.detectText(req.file.path, function(err, text, apiResponse){
+		fs.unlinkSync(req.file.path);
 		if(err){
 			res.send(err);
 		} else {
