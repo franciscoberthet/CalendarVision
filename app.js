@@ -4,13 +4,34 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var multer = require('multer');
+var upload = multer({dest: 'uploads/'});
 
+var vision = require('@google-cloud/vision')({
+  projectId: 'daring-keep-139023',
+  keyFilename: 'My Project-e9080f515280.json'
+});
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.post('/upload', upload.single('image'), function(req, res, next){
+	vision.detectText(req.file.path, function(err, text, apiResponse){
+		if(err){
+			res.send(err);
+		} else {
+			res.send(JSON.stringify(text));
+		}
+	})
+});
+
+
+
+
+
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
