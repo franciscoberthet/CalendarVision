@@ -11,24 +11,36 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.joemi.enghacks.MainActivity">
 
-    <Button
-        android:text="Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/b" />
+        android:layout_alignParentStart="true">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/alert_dark_frame"
-        android:id="@+id/imageView"
-        android:layout_above="@+id/b"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true" />
+        <Button
+            android:text="Choose from gallery"
+            android:layout_width="match_parent"
+            android:id="@+id/choose_from_gallery_button"
+            style="@android:style/Widget.DeviceDefault.Button"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/take_picture_button"
+            android:text="Take a picture"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
 </RelativeLayout>
