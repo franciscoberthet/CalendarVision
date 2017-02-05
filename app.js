@@ -63,9 +63,7 @@ app.post('/upload', upload.single('image'), function(req, res, next){
 					var returnobj = {
 						date: chrono.parseDate(concatSpace(text)),
 						location: location,
-						title: title,
-						entities: entities,
-						text: text
+						title: title
 					}
 					res.send(returnobj);
 				}
