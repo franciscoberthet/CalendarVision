@@ -35,22 +35,14 @@ app.post('/upload', upload.single('image'), function(req, res, next){
 			res.send(err);
 		} else {
 			var concatted = concatSpace(text);
-			
+			console.log(concatted);
 			language.detectEntities(concatted, function(err, entities, apiResponse){
 				if(err){
 					res.send(err);
 				} else {
-					var title = "";
-					
 					var location = stringInLibrary(text, library);
+					var title = getAdjacent(text, findMax(text));
 					
-					if(entities.events){
-						title = entities.events[0];
-					}else if (entities.other){
-						title = entities.organizations[0];
-					}else if (entities.other){
-						title = entities.other[0];
-					}
 					
 					if(location==""){
 						if(entities.places){
@@ -71,6 +63,46 @@ app.post('/upload', upload.single('image'), function(req, res, next){
 		}
 	})
 });
+
+function getAdjacent(text, index){
+	var title = text[index].desc;
+	for(var i=index+1;i<text.length;i++){
+		if(getHeight(text[index])*0.75 <= getHeight(text[i])){
+			title = title + " " + text[i].desc;
+		}else{
+			break;
+		}
+	}
+	
+	for(var i=index-1;i>1;i--){
+		if(getHeight(text[index])*0.75 <= getHeight(text[i])){
+			title = text[i].desc + " " + title;
+		}else{
+			break;
+		}
+	}
+	return title;
+}
+
+function getHeight(text){
+	var max = Math.max(text.bounds[0].y, text.bounds[1].y,text.bounds[2].y,text.bounds[3].y);
+	var min = Math.min(text.bounds[0].y, text.bounds[1].y,text.bounds[2].y,text.bounds[3].y);
+	return max-min;
+}
+
+function findMax(text){
+	var max = 0;
+	var height;
+	var maxindex;
+	for(var i=1;i<text.length;i++){
+		height = getHeight(text[i]);
+		if(max<height){
+			max = height;
+			maxindex = i;
+		}
+	}
+	return maxindex;
+}
 
 var concatSpace = function(strings){
 	var new_string = strings[1].desc;
